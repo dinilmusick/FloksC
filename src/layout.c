@@ -55,7 +55,7 @@ fc_result fc_theme_apply_tree(fc_ui *ui,fc_handle root,const fc_theme *theme){
     if(!theme->present[ui->entries[i].kind])return FC_NOT_FOUND;
     break;
    }
-   if(current.parent.index==UINT32_MAX)break;
+   if(c->parent.index==UINT32_MAX)break;
    current=c->parent;depth++;
   }
   if(depth==ui->capacity)return FC_CYCLE;
@@ -69,7 +69,7 @@ fc_result fc_theme_apply_tree(fc_ui *ui,fc_handle root,const fc_theme *theme){
    if(current.index==root.index&&current.generation==root.generation){
     ui->entries[i].style=theme->styles[ui->entries[i].kind];break;
    }
-   if(current.parent.index==UINT32_MAX)break;
+   if(c->parent.index==UINT32_MAX)break;
    current=c->parent;depth++;
   }
  }
