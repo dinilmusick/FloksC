@@ -7,3 +7,5 @@ The host supplies all storage, FrnlC runtime and rasterization. No implicit heap
 Build: `cmake -S . -B build -DCMAKE_PREFIX_PATH=/path/to/frnlc/install`; `cmake --build build`; `ctest --test-dir build --output-on-failure`. See `examples/consumer` for a separate installed consumer, and `docs/PARITY.md` for pinned sources and remaining gaps.
 
 Bounded persistence: include `<floksc/serialization.h>` and use the distinct UI, graph and timeline save/load functions; callers supply buffers and decode scratch arrays. Snapshots are little-endian, versioned and require binary64 floating point; unsupported hosts return `FC_MISMATCH`. Invalid, truncated and cyclic data are rejected without committing target state.
+
+Renderer-neutral geometry and theme packs: include `<floksc/layout.h>`, create a bounded `fc_themes` registry, apply explicit styles per component/subtree, and call `fc_layout_apply` with row, column or grid constraints. Rendering remains entirely host-driven.

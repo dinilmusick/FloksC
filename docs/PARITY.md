@@ -12,7 +12,7 @@ Native utility source: dinilmusick/GutC@0e26ac721c7a020078cfaf52e6fce259fe03301e
 | MusicalTimeline.tsx | fc_timeline, loop and playhead | Functional data layer; host handles drag/render |
 | MidiTimeline.tsx | fc_note, MIDI pitch/time transforms | Functional data layer; host handles canvas |
 | FrnlC semantic runtime | fc_frnl_register and fc_frnl_event | Explicit bridge; host registers states first |
-| Theming | fc_style descriptors | Basic style only, not full theme pack resolution |
+| Theming and layout | host-defined fc_theme table, fc_layout grid/row/column and fc_style | Functional basic theme selection and geometry; not full TypeScript theme packs |
 | Authoring persistence | Versioned bounded little-endian fc_ui_save/load, fc_graph_save/load, fc_timeline_save/load | Binary state snapshots and corruption rejection; advanced TS session schema/bindings still absent |
 
 Strict C11, no implicit allocation, OS renderer, resident timer or static mutable globals. This first implementation is NOT a full Floks TypeScript feature parity certificate. Verification requires GitHub exact-head CI and external consumer, not merely compilation.
