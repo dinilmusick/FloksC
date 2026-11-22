@@ -1,0 +1,50 @@
+name: Native C11
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+        config: [Debug, Release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned FrnlC
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/dinilmusick/FrnlC.git "$RUNNER_TEMP/FrnlC"
+          git -C "$RUNNER_TEMP/FrnlC" checkout --detach 1684071ce39ba539cab221810bdf0a8f12329ede
+          cmake -S "$RUNNER_TEMP/FrnlC" -B "$RUNNER_TEMP/frnl-build" -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/native"
+          cmake --build "$RUNNER_TEMP/frnl-build" --parallel
+          cmake --install "$RUNNER_TEMP/frnl-build"
+      - name: Build test install and external consumer
+        run: |
+          set -euo pipefail
+          export CC=${{ matrix.compiler }}
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.config }} -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/native" -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/native"
+          cmake --build build --parallel
+          ctest --test-dir build --output-on-failure
+          cmake --install build
+          cmake -S examples/consumer -B consumer-build -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/native"
+          cmake --build consumer-build --parallel
+          ctest --test-dir consumer-build --output-on-failure
+  sanitizer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sanitizer regression
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/dinilmusick/FrnlC.git "$RUNNER_TEMP/FrnlC"
+          git -C "$RUNNER_TEMP/FrnlC" checkout --detach 1684071ce39ba539cab221810bdf0a8f12329ede
+          cmake -S "$RUNNER_TEMP/FrnlC" -B "$RUNNER_TEMP/frnl-build" -DBUILD_TESTING=OFF -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/native"
+          cmake --build "$RUNNER_TEMP/frnl-build" --parallel
+          cmake --install "$RUNNER_TEMP/frnl-build"
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/native" -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined"
+          cmake --build build --parallel
+          ctest --test-dir build --output-on-failure

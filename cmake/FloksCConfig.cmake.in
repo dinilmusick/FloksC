@@ -1,0 +1,5 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(FrnlC 0.2 CONFIG REQUIRED)
+include("${CMAKE_CURRENT_LIST_DIR}/FloksCTargets.cmake")
+check_required_components(FloksC)
