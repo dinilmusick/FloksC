@@ -48,6 +48,8 @@ typedef struct {uint32_t source,target;uint8_t output,input;} fc_edge;
 typedef struct {fc_node *nodes;fc_edge *edges;uint8_t *scratch;size_t node_count,node_cap,edge_count,edge_cap;
  double zoom,pan_x,pan_y,min_zoom,max_zoom;} fc_graph;
 fc_result fc_graph_init(fc_graph *g,fc_node *nodes,size_t node_cap,fc_edge *edges,size_t edge_cap,uint8_t *scratch);
+/* Validates host-mutated graph data and detects typed-port errors and cycles using g->scratch. */
+fc_result fc_graph_validate(const fc_graph *g);
 fc_result fc_node_add(fc_graph *g,uint32_t id,const char *name,double x,double y);
 fc_result fc_node_delete(fc_graph *g,uint32_t id);
 fc_result fc_port_add(fc_graph *g,uint32_t id,const char *name,fc_port_direction direction,fc_signal signal);

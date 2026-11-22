@@ -240,7 +240,9 @@ fc_result fc_canvas(const fc_graph *g,double sx,double sy,double *x,double *y){
 }
 fc_result fc_zoom_at(fc_graph *g,double sx,double sy,double zoom){
  double x,y,px,py;
- if(!g||!finite(zoom)||zoom<g->min_zoom||zoom>g->max_zoom)return FC_INVALID;
+ if(!g||!finite(zoom)||!finite(g->min_zoom)||!finite(g->max_zoom)||
+ !finite(g->zoom)||!finite(g->pan_x)||!finite(g->pan_y)||g->min_zoom<=0||
+ g->max_zoom<g->min_zoom||zoom<g->min_zoom||zoom>g->max_zoom)return FC_INVALID;
  if(fc_canvas(g,sx,sy,&x,&y)!=FC_OK)return FC_INVALID;
  px=sx-x*zoom;py=sy-y*zoom;
  if(!finite(px)||!finite(py))return FC_OVERFLOW;
@@ -277,11 +279,12 @@ fc_result fc_note_delete(fc_timeline *t,uint64_t id){
  return FC_NOT_FOUND;
 }
 fc_result fc_loop_set(fc_timeline *t,double start,double end){
- if(!t||!finite(start)||!finite(end)||start<0||end>t->length||start>=end)return FC_INVALID;
+ if(!t||!finite(t->length)||t->length<=0||!finite(start)||!finite(end)||
+ start<0||end>t->length||start>=end)return FC_INVALID;
  t->loop_start=start;t->loop_end=end;return FC_OK;
 }
 fc_result fc_seek(fc_timeline *t,double beat){
- if(!t||!finite(beat)||beat<0||beat>t->length)return FC_INVALID;
+ if(!t||!finite(t->length)||t->length<=0||!finite(beat)||beat<0||beat>t->length)return FC_INVALID;
  t->playhead=beat;return FC_OK;
 }
 fc_result fc_pitch_y(int pitch,double height,double *y){
