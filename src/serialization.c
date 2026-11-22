@@ -151,6 +151,7 @@ fc_result fc_graph_save(const fc_graph *g,uint8_t *out,size_t cap,size_t *writte
  g->node_count>UINT32_MAX||g->edge_count>UINT32_MAX||!isfinite(g->zoom)||
  g->zoom<=0||!isfinite(g->pan_x)||!isfinite(g->pan_y)||!isfinite(g->min_zoom)||!isfinite(g->max_zoom)||
  g->min_zoom<=0||g->max_zoom<g->min_zoom)return FC_INVALID;
+ r=fc_graph_validate(g);if(r!=FC_OK)return r;
  magic_write(&s,"FCG1");w32(&s,(uint32_t)g->node_count);w32(&s,(uint32_t)g->edge_count);
  wd(&s,g->pan_x);wd(&s,g->pan_y);wd(&s,g->zoom);wd(&s,g->min_zoom);wd(&s,g->max_zoom);
  for(i=0;i<g->node_count;i++){
@@ -224,6 +225,7 @@ fc_result fc_timeline_save(const fc_timeline *t,uint8_t *out,size_t cap,size_t *
   if(!n->id||n->id>=t->next_id||n->pitch>127||!isfinite(n->start)||
   !isfinite(n->length)||n->start<0||n->start>=t->length||
   n->length<=0||n->length>t->length-n->start)return FC_INVALID;
+  size_t j;for(j=0;j<i;j++)if(t->notes[j].id==n->id)return FC_DUPLICATE;
   w64(&s,n->id);w8(&s,n->pitch);wd(&s,n->start);wd(&s,n->length);w8(&s,n->selected?1:0);
  }
  return finish_save(&s,written);
