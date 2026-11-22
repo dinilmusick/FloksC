@@ -16,3 +16,5 @@ Native utility source: dinilmusick/GutC@0e26ac721c7a020078cfaf52e6fce259fe03301e
 | Authoring persistence | Versioned bounded little-endian fc_ui_save/load, fc_graph_save/load, fc_timeline_save/load | Binary state snapshots and corruption rejection; advanced TS session schema/bindings still absent |
 
 Strict C11, no implicit allocation, OS renderer, resident timer or static mutable globals. This first implementation is NOT a full Floks TypeScript feature parity certificate. Verification requires GitHub exact-head CI and external consumer, not merely compilation.
+
+**FrnlC borrowed lifetime constraint:** `frnl_add_component` stores pointers to FloksC component IDs. When a component has been registered in the host FrnlC runtime, clean up that FrnlC runtime before destroying or reusing its FloksC storage. FrnlC 0.2 does not provide per-component unregister; the adapter does not fabricate one. Subsequent re-registration requires a fresh host runtime.

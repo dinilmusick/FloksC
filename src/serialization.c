@@ -7,10 +7,12 @@
 typedef struct {uint8_t *out;const uint8_t *in;size_t capacity,pos;fc_result err;} stream;
 static bool binary64(void){return sizeof(double)==8&&DBL_MANT_DIG==53&&DBL_MAX_EXP==1024&&FLT_RADIX==2;}
 static void write_bytes(stream *s,const void *data,size_t n){
- if(s->err!=FC_OK)return;
+ if(s->err!=FC_OK&&s->err!=FC_CAPACITY)return;
  if(n>SIZE_MAX-s->pos){s->err=FC_OVERFLOW;return;}
- if(s->out&&n<=s->capacity-s->pos)memcpy(s->out+s->pos,data,n);
- else if(s->out)s->err=FC_CAPACITY;
+ if(s->err==FC_OK&&s->out){
+  if(s->pos<=s->capacity&&n<=s->capacity-s->pos)memcpy(s->out+s->pos,data,n);
+  else s->err=FC_CAPACITY;
+ }
  s->pos+=n;
 }
 static void read_bytes(stream *s,void *out,size_t n){

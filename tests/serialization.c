@@ -10,7 +10,8 @@ int main(void){
  assert(fc_add(&ui,FC_INPUT,"child",root,&child)==FC_OK);
  assert(fc_value_set(&ui,child,"alpha")==FC_OK);
  assert(fc_ui_save(&ui,NULL,0,&len)==FC_OK&&len>0);
- assert(fc_ui_save(&ui,buf,len-1,&len)==FC_CAPACITY);
+ size_t required=len;
+ assert(fc_ui_save(&ui,buf,len-1,&len)==FC_CAPACITY&&len==required);
  assert(fc_ui_save(&ui,buf,sizeof(buf),&len)==FC_OK);
  assert(fc_destroy(&ui,root)==FC_OK);
  assert(fc_ui_load(&ui,buf,len,scratch,3)==FC_OK);
