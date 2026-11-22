@@ -9,7 +9,7 @@ int main(void){
  assert(fc_add(&ui,FC_PANEL,"root",fc_invalid(),&root)==FC_OK);
  assert(fc_add(&ui,FC_INPUT,"child",root,&child)==FC_OK);
  assert(fc_value_set(&ui,child,"alpha")==FC_OK);
- assert(fc_ui_save(&ui,buf,0,&len)==FC_OK&&len>0);
+ assert(fc_ui_save(&ui,NULL,0,&len)==FC_OK&&len>0);
  assert(fc_ui_save(&ui,buf,len-1,&len)==FC_CAPACITY);
  assert(fc_ui_save(&ui,buf,sizeof(buf),&len)==FC_OK);
  assert(fc_destroy(&ui,root)==FC_OK);

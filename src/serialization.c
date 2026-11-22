@@ -59,7 +59,8 @@ static fc_result start_save(stream *s,uint8_t *buffer,size_t capacity,size_t *wr
  if(written)*written=0;
  if(!s||!written)return FC_INVALID;
  s->out=buffer;s->in=NULL;s->capacity=capacity;s->pos=0;s->err=FC_OK;
- if(!binary64())return FC_MISMATCH;return FC_OK;
+ if(!binary64())return FC_MISMATCH;
+ return FC_OK;
 }
 static fc_result finish_save(stream *s,size_t *written){
  *written=s->pos;return s->err;
@@ -174,7 +175,8 @@ fc_result fc_graph_load(fc_graph *g,const uint8_t *data,size_t length,
  ns==g->nodes||es==g->edges||walk==g->scratch)return FC_INVALID;
  r=start_load(&s,data,length);if(r!=FC_OK)return r;
  magic_read(&s,"FCG1");n=r32(&s);e=r32(&s);
- if(s.err!=FC_OK||n>g->node_cap||e>g->edge_cap)return FC_CAPACITY;
+ if(s.err!=FC_OK)return FC_INVALID;
+ if(n>g->node_cap||e>g->edge_cap)return FC_CAPACITY;
  r=fc_graph_init(&tmp,ns,g->node_cap,es,g->edge_cap,walk);if(r!=FC_OK)return r;
  tmp.pan_x=rd(&s);tmp.pan_y=rd(&s);tmp.zoom=rd(&s);
  tmp.min_zoom=rd(&s);tmp.max_zoom=rd(&s);
@@ -228,7 +230,8 @@ fc_result fc_timeline_load(fc_timeline *t,const uint8_t *data,size_t length,fc_n
  stream s;size_t i,j,n;fc_result r;double beats,lo,hi,head;uint64_t next;
  if(!t||!t->notes||!scratch||scratch==t->notes||scratch_count<t->capacity)return FC_INVALID;
  r=start_load(&s,data,length);if(r!=FC_OK)return r;
- magic_read(&s,"FCT1");n=r32(&s);if(s.err!=FC_OK||n>t->capacity)return FC_CAPACITY;
+ magic_read(&s,"FCT1");n=r32(&s);if(s.err!=FC_OK)return FC_INVALID;
+ if(n>t->capacity)return FC_CAPACITY;
  beats=rd(&s);lo=rd(&s);hi=rd(&s);head=rd(&s);next=r64(&s);
  if(s.err!=FC_OK||!isfinite(beats)||beats<=0||lo<0||lo>=hi||hi>beats||
  head<0||head>beats||!next)return FC_INVALID;
