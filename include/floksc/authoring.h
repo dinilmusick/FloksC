@@ -78,6 +78,14 @@ fc_result fc_author_metadata(fc_author_session *s,const char *key,const char *va
 fc_result fc_author_operation_set(fc_author_session *s,fc_author_operation op);
 fc_result fc_author_operation_remove(fc_author_session *s,const char *id);
 fc_result fc_author_validate(const fc_author_session *s);
+/* FCAS v1 snapshot. Format uses explicit little-endian integers, version magic,
+ * binary64 finite numbers and length-prefixed text. For required length pass
+ * out=NULL; caller allocates output and separate decode scratch arrays.
+ * Decode commits only after full graph/schema/field validation. */
+fc_result fc_author_save(const fc_author_session *s,uint8_t *out,size_t capacity,size_t *written);
+fc_result fc_author_load(fc_author_session *target,const uint8_t *data,size_t length,
+ fc_author_node *scratch_nodes,fc_author_field *scratch_fields,
+ fc_author_operation *scratch_operations,uint8_t *scratch_walk);
 #ifdef __cplusplus
 }
 #endif
