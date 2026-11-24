@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
-project(FloksC VERSION 0.1.0 LANGUAGES C)
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" ULTRST_RELEASE_VERSION LIMIT_COUNT 1)
+project(FloksC VERSION ${ULTRST_RELEASE_VERSION} LANGUAGES C)
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 find_package(FrnlC 0.2 CONFIG REQUIRED)
